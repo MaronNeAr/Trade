@@ -1,0 +1,96 @@
+{
+  "name": "trade",
+  "version": "3.0.0",
+  "private": true,
+  "description": "My Electron app",
+  "author": "Administrator",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "make": "electron-forge make",
+    "package": "electron-forge package",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "start": "electron-forge start"
+  },
+  "main": "background.js",
+  "dependencies": {
+    "@nutui/nutui": "^3.3.3",
+    "axios": "^0.26.1",
+    "core-js": "^3.8.3",
+    "echarts": "^5.3.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "element-plus": "^2.1.8",
+    "mitt": "^3.0.0",
+    "postcss-load": "^0.1.6",
+    "postcss-loader": "^7.0.1",
+    "scss-loader": "^0.0.1",
+    "stylus-loader": "^7.0.0",
+    "vue": "^3.2.13",
+    "vue-cookie": "^1.1.4",
+    "vue-cookies": "^1.8.2",
+    "vue-echarts": "^6.5.1",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.70",
+    "@electron-forge/maker-deb": "^6.0.0-beta.70",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.70",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.70",
+    "@electron-forge/maker-zip": "^6.0.0-beta.70",
+    "@types/electron-devtools-installer": "^2.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "@vue/eslint-config-typescript": "^9.1.0",
+    "electron": "^22.0.0-beta.2",
+    "electron-devtools-installer": "^3.1.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "node-sass": "^7.0.3",
+    "sass-loader": "^13.0.2",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^4.0.0",
+    "typescript": "~4.5.5",
+    "vue-cli-plugin-electron-builder": "~2.1.1"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "electron_demo"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  },
+  "keywords": [],
+  "license": "MIT",
+  "productName": "caculator-app"
+}
