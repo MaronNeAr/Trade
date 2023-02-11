@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.TweetCommentMapper">
+    <select id="selectTweetCommentByTid" resultType="com.example.pojo.TweetComment">
+        select *
+        from tweet_comment
+        where tweet_id = #{tid};
+    </select>
+
+    <insert id="insertTweetCommentByTid">
+        insert into tweet_comment (observer, comment, tweet_id)
+        values (#{observer}, #{comment}, #{tweetId})
+    </insert>
+
+    <delete id="deleteTweetCommentByTid">
+        delete from tweet_comment
+        where tweet_id = #{tid};
+    </delete>
+
+</mapper>
