@@ -26,6 +26,6 @@ public class TweetService {
     }
 
     public boolean followTweet(Integer id, String followers) {
-        return tweetMapper.updateTweetFollowersById(id,followers) > 0;
+        return tweetMapper.updateTweetFollowersById(id, followers) > 0;
     }
 }

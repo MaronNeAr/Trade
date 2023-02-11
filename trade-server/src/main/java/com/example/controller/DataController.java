@@ -44,10 +44,10 @@ public class DataController {
         try {
             String content = req.getParameter("content");
             fileService.writeToFile("data/k-chart/" + sc + ".data", content);
-            return new SuccessMessage("上传币种数据成功").getMessage();
+            return new SuccessMessage("上传日K数据成功").getMessage();
         } catch (Exception e) {
             System.out.println(e);
-            return new ErrorMessage("上传币种数据失败").getMessage();
+            return new ErrorMessage("上传日K数据失败").getMessage();
         }
     }
 
@@ -55,10 +55,56 @@ public class DataController {
     public Object getChartData(@PathVariable String sc) {
         try {
             String content = fileService.readFromFile("data/k-chart/" + sc + ".data");
-            return new SuccessMessage<String>("获取币种数据成功", content).getMessage();
+            return new SuccessMessage<String>("获取日K数据成功", content).getMessage();
         } catch (Exception e) {
             System.out.println(e);
-            return new ErrorMessage("获取币种数据失败").getMessage();
+            return new ErrorMessage("获取日K数据失败").getMessage();
+        }
+    }
+
+    @PostMapping("/m-depth/{sc}")
+    public Object setDepthData(HttpServletRequest req, @PathVariable String sc) {
+        try {
+            String content = req.getParameter("content");
+            fileService.writeToFile("data/m-depth/" + sc + ".data", content);
+            return new SuccessMessage("上传市场深度数据成功").getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("上传市场深度数据失败").getMessage();
+        }
+    }
+
+    @GetMapping("/m-depth/{sc}")
+    public Object getDepthData(@PathVariable String sc) {
+        try {
+            String content = fileService.readFromFile("data/m-depth/" + sc + ".data");
+            return new SuccessMessage<String>("获取市场深度数据成功", content).getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("获取市场深度数据失败").getMessage();
+        }
+    }
+
+    @PostMapping("/ticker/{sc}")
+    public Object setTickerData(HttpServletRequest req, @PathVariable String sc) {
+        try {
+            String content = req.getParameter("content");
+            fileService.writeToFile("data/ticker/" + sc + ".data", content);
+            return new SuccessMessage("上传聚合行情数据成功").getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("上传聚合行情数据失败").getMessage();
+        }
+    }
+
+    @GetMapping("/ticker/{sc}")
+    public Object getTickerData(@PathVariable String sc) {
+        try {
+            String content = fileService.readFromFile("data/ticker/" + sc + ".data");
+            return new SuccessMessage<String>("获取聚合行情数据成功", content).getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("获取聚合行情数据失败").getMessage();
         }
     }
 }
