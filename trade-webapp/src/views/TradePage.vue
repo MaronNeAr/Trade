@@ -1,28 +1,22 @@
 <template>
-<div class="infiniteUl" id="refreshScroll">
-    <nut-collapse v-model:active="activeNames" icon="down-arrow" class="product-details">
-        <nut-infiniteloading pull-icon="JD" container-id="refreshScroll" :use-window="false" :is-open-refresh="true" :has-more="refreshHasMore" @load-more="refreshLoadMore" @refresh="refresh">
-            <nut-collapse-item v-for="item, idx in refreshList" :name="idx" :key="idx">
-                <template v-slot:mTitle>
-                    <span class="code">{{item.at}}</span>
-                    &emsp;
-                    <span class="name">{{item.dn}}</span>
-                    &emsp;
-                    <span class="price-up" v-if="item.rate > 0">{{item.price}}</span>
-                    <span class="price-down" v-else-if="item.rate < 0">{{item.price}}</span>
-                    <span v-else>{{item.price}}</span>
-                </template>
-                <template v-slot:sTitle>
-                    <nut-trendarrow :show-text-color="false" :rate="item.rate" class="rate" />
-                </template>
-                <div>股票详细信息 待开发...</div>
-            </nut-collapse-item>
-        </nut-infiniteloading>
-    </nut-collapse>
+<div>
+    <div class="top-box">普通交易</div>
+    <nut-navbar class="header">
+        <template #content>
+            <nut-tabs v-model="state.tab" @click="changeTabList" auto-height>
+                <nut-tabpane pane-key="buy" title="买入"></nut-tabpane>
+                <nut-tabpane pane-key="sale" title="卖出"></nut-tabpane>
+                <nut-tabpane pane-key="rem" title="撤单"></nut-tabpane>
+                <nut-tabpane pane-key="hold" title="持仓"></nut-tabpane>
+                <nut-tabpane pane-key="query" title="查询"></nut-tabpane>
+            </nut-tabs>
+        </template>
+    </nut-navbar>
+    <router-view class="trade-view"></router-view>
 </div>
 </template>
 
-<script>
+<script lang="ts">
 import {
     ref,
     reactive,
@@ -32,66 +26,42 @@ import {
 import {
     Toast
 } from '@nutui/nutui';
+import { useRouter } from 'vue-router';
 export default {
     setup(props) {
-        const activeNames = ref([]);
-        const refreshHasMore = ref(true);
-        const data = reactive({
-            refreshList: []
+        const router = useRouter();
+        const state = reactive({
+            tab: 'buy'
         });
-        const refreshLoadMore = done => {
-            setTimeout(() => {
-                const curLen = data.refreshList.length;
-                for (let i = curLen; i < curLen + 30; i++) {
-                    data.refreshList.push(
-                        `${i}`
-                    );
-                }
-                if (data.refreshList.length > 30) refreshHasMore.value = false;
-                done()
-            }, 500);
-        };
-
-        const refresh = (done) => {
-            setTimeout(() => {
-                Toast.success('刷新成功');
-                done()
-            }, 1000)
-        }
-        const init = () => {
-            for (let i = 0; i < 30; i++) {
-                data.refreshList.push(`${i}`);
+        const methods = {
+            changeTabList(tab: any) {
+                state.tab = tab.paneKey as string;
+                router.push(state.tab);
             }
         }
-        onMounted(() => {
-            init()
-        });
         return {
-            activeNames,
-            refreshLoadMore,
-            refreshHasMore,
-            refresh,
-            ...toRefs(data)
+            state,
+            ...methods
         };
     }
 }
 </script>
 
 <style>
-.infiniteUl {
-    height: 100%;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: #eee
+.trade-view {
+    margin: 0 10px;
+}
+.top-box {
+    background-color: #bd3124;
+    color: #fff;
+    height: 50px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 50px;
+    box-shadow: 3px 2px #cfcfcf;
 }
 
-.infiniteLi {
-    margin-top: 10px;
-    font-size: 14px;
-    color: rgba(100, 100, 100, 1);
-    text-align: center;
+.content {
+    height: 500px;
 }
 </style>

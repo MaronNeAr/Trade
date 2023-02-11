@@ -26,15 +26,15 @@
                     <span class="name">{{ " " + followers }}</span>
                     <div class="h5px"></div>
                 </div>
-                <div class="comment-content">
-                    <span class="name">Aurora_NeAr：</span>
-                    <span>这是一条测试评论这是一条测试评论这是一条测试评论这是一条测试评论这是一条测试评论</span>
+                <div class="comment-content" v-for="comment in comments" :key="comment.id">
+                    <span class="name">{{comment.observer}}：</span>
+                    <span>{{comment.comment}}</span>
                 </div>
                 <div class="h5px"></div>
                 <div>
                     <nut-input class="comment-input" placeholder="评论" v-model="comment.text" v-if="commentInputShow">
                         <template #button>
-                            <nut-button size="small" type="success">发送</nut-button>
+                            <nut-button size="small" type="success" @click="send">发送</nut-button>
                         </template>
                     </nut-input>
                 </div>
@@ -68,6 +68,7 @@ export default {
         const comment = reactive({
             text: null
         });
+        const comments = ref([]);
         const methods = {
             follow() {
                 followed.value = true;
@@ -85,6 +86,9 @@ export default {
                 } else if (followers.value.indexOf(localname.value) == 0) followers.value = followers.value.replace(localname.value + "、", "")
                 else followers.value = followers.value.replace("、" + localname.value, "");
                 postFollow();
+            },
+            send() {
+                postComment();
             }
         };
         async function postFollow() {
@@ -94,6 +98,29 @@ export default {
             const response = (await HttpManager.postFollow(params)) as ResponseBody;
             if (!response.success) Notify.danger(response.message);
         }
+        const getComment = async() => {
+            const response = await HttpManager.getComment(props.tweet.id) as ResponseBody;
+            if (!response.success) Notify.danger(response.message);
+            comments.value = response.data;
+        }
+        const postComment = async() => {
+            let params = new URLSearchParams();
+            params.append("tid", props.tweet.id);
+            params.append("observer", localname.value); 
+            params.append("comment", comment.text);
+            const response = await HttpManager.postComment(params) as ResponseBody;
+            if (!response.success) Notify.danger(response.message);
+            else {
+                comments.value.push({
+                    id: null,
+                    observer: localname.value,
+                    comment: comment.text,
+                    tid: props.tweet.tid
+                });
+                comment.text = null;
+            }
+        }
+        getComment();
         return {
             localname,
             followShow,
@@ -101,6 +128,7 @@ export default {
             followers,
             commentInputShow,
             comment,
+            comments,
             attachImageUrl: HttpManager.attachImageUrl,
             ...methods
         };

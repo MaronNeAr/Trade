@@ -29,7 +29,8 @@
 import {
     onMounted,
     reactive,
-    ref
+    ref,
+    watch
 } from 'vue';
 import axios from 'axios';
 import KCanvas from '@/components/KCanvas.vue'
@@ -39,22 +40,37 @@ import {
 import { writeFile } from 'node:fs';
 import { HttpManager } from '@/api';
 export default {
+    props: {
+        type : String
+    },
     components:{
         KCanvas
     },
-    setup() {
+    setup(props) {
         let baseURL = 'https://api-aws.huobi.pro';
         const activeNames = ref([]);
         const currencies = ref([]);
-        const symbols = ref();
+        const symbols = ref([]);
+        const currentSymblols = ref([]);
         const refreshHasMore = ref(true);
+        
+        watch(() => props.type, (value) => {
+            activeNames.value = [];
+            currencies.value = [];
+            refreshHasMore.value = true;
+            currentSymblols.value = symbols.value.filter((item) => item.qc == value);
+            for (let i = 0; i < 20; i++) {
+                currencies.value.push(currentSymblols.value.shift());
+            }
+        });
 
         const refreshLoadMore = done => {
             setTimeout(() => {
                 for (let i = 0; i < 20; i++) {
-                    currencies.value.push(symbols.value.pop());
+                    if (currentSymblols.value.length == 0) break;
+                    currencies.value.push(currentSymblols.value.shift());
                 }
-                if (symbols.value.length == 0) refreshHasMore.value = false;
+                if (currentSymblols.value.length == 0) refreshHasMore.value = false;
                 done()
             }, 500);
         };
@@ -65,7 +81,7 @@ export default {
                 asyncRefresh();
                 done();
             }, 1000)
-        }
+        };
 
         async function asyncRefresh() {
             currencies.value = [];
@@ -80,17 +96,23 @@ export default {
                 if (result.data) symbols.value = JSON.parse(result.data);
             });
             // symbols.value = ((await axios.get(baseURL + "/v2/settings/common/symbols")) as ResponseBody).data.data;
+            currentSymblols.value = symbols.value.filter((item) => item.qc == props.type);
             for (let i = 0; i < 20; i++) {
-                currencies.value.push(symbols.value.shift());
+                if (currentSymblols.value.length == 0) break;
+                currencies.value.push(currentSymblols.value.shift());
             }
             Toast.hide();
         }
 
         async function getData() {
             const result = (await HttpManager.getCurrency() as ResponseBody);
-            if (result.data) symbols.value = JSON.parse(result.data);
+            if (result.data) {
+                symbols.value = JSON.parse(result.data);
+                currentSymblols.value = symbols.value.filter((item) => item.qc == props.type);
+            }
             for (let i = 0; i < 20; i++) {
-                currencies.value.push(symbols.value.shift());
+                if (currentSymblols.value.length == 0) break;
+                currencies.value.push(currentSymblols.value.shift());
             }
             Toast.hide();
         }

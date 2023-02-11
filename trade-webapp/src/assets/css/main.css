@@ -10,6 +10,10 @@
   /*设置样式以在动画不播放时应用元素。forward是设置动画结束后，使用元素的结束属性值*/
 }
 
+.test-border {
+  border: 1px solid;
+}
+
 @keyframes fadeInAnimation {
   0% {
       opacity: 0;

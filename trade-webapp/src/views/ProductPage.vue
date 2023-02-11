@@ -14,20 +14,22 @@
     <nut-navbar class="header">
         <template #content>
             <nut-tabs v-model="productType" @click="changeTabList" auto-height>
-                <nut-tabpane pane-key="cu" title="USDT">
+                <nut-tabpane pane-key="usdt" title="USDT">
                 </nut-tabpane>
-                <nut-tabpane pane-key="cn" title="A股">
+                <nut-tabpane pane-key="btc" title="BTC">
                 </nut-tabpane>
-                <nut-tabpane pane-key="hk" title="港股">
+                <nut-tabpane pane-key="eth" title="ETH">
                 </nut-tabpane>
-                <nut-tabpane pane-key="us" title="美股">
+                <nut-tabpane pane-key="ht" title="HT">
                 </nut-tabpane>
-                <nut-tabpane pane-key="fg" title="期货">
+                <nut-tabpane pane-key="husd" title="HUSD">
+                </nut-tabpane>
+                <nut-tabpane pane-key="usdd" title="USDD">
                 </nut-tabpane>
             </nut-tabs>
         </template>
     </nut-navbar>
-    <router-view></router-view>
+    <router-view :type="productType"></router-view>
 </div>
 </template>
 
@@ -42,7 +44,7 @@ export default {
     components: {},
     setup() {
         const router = useRouter();
-        const productType = ref('cu');
+        const productType = ref('usdt');
         const searchValue = ref('');
         const methods = {
             back() {
@@ -50,7 +52,7 @@ export default {
             },
             changeTabList(tab: any) {
                 productType.value = tab.paneKey as string;
-                router.push(productType.value)
+                // router.push(productType.value)
             },
             clickLeft() {
                 alert("back");

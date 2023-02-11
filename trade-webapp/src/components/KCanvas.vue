@@ -1,43 +1,56 @@
 <template>
-    <div class="canvas" ref="canvas"></div>
+<div class="canvas" ref="canvas"></div>
 </template>
 
 <script lang="ts">
 import * as echarts from 'echarts'
 import axios from 'axios';
-import { ref } from 'vue';
-import { HttpManager } from '@/api';
+import {
+    ref,
+    watch
+} from 'vue';
+import {
+    HttpManager
+} from '@/api';
+import { Toast } from '@nutui/nutui';
 
 export default {
     props: {
-        tradePair : String
+        tradePair: String
     },
     setup(props) {
         let baseURL = 'https://api-aws.huobi.pro';
         const tradeDate = ref([]);
         const canvas = ref(null);
 
+        watch(() => props.tradePair, val => {
+            Toast.loading("正在加载");
+            getData();
+        });
+
         async function getData() {
-            await await axios.get(baseURL + "/market/history/kline?symbol=" + props.tradePair + "&period=1day").then((response) => {
+            await axios.get(baseURL + "/market/history/kline?symbol=" + props.tradePair + "&period=1day").then((response) => {
                 tradeDate.value = response.data.data;
-                let params = new URLSearchParams();
-                params.append("content", JSON.stringify(response.data.data))
-                HttpManager.postKChart(props.tradePair, params);
-                renderChart();
+                if (Array.isArray(tradeDate.value)) {
+                    renderChart();
+                    let params = new URLSearchParams();
+                    params.append("content", JSON.stringify(response.data.data))
+                    HttpManager.postKChart(props.tradePair, params);
+                } else console.log("暂无在线数据");
             }).catch(async (error) => {
                 const result = (await HttpManager.getKChart(props.tradePair) as ResponseBody);
-                if (result.data && result.data != undefined) {
+                if (result.data) {
                     tradeDate.value = JSON.parse(result.data);
                     if (Array.isArray(tradeDate.value)) renderChart();
+                    else console.log("暂无在线数据");
                 } else console.log("暂无在线数据，请连接vp");
             });
-            // tradeDate.value = ((await axios.get(baseURL + "/market/history/kline?symbol=" + props.tradePair + "&period=1day")) as ResponseBody).data.data;
         }
 
         getData();
 
-        const renderChart = async() => {
-            if (!canvas.value) return;
+        const renderChart = async () => {
+            if (!canvas.value || !tradeDate.value) return;
             const myChart = echarts.init(canvas.value);
             const upColor = '#ec0000';
             const upBorderColor = '#8A0000';

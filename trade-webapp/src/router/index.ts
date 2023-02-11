@@ -45,6 +45,32 @@ const routes: Array<RouteRecordRaw> = [
         path:'/trade',
         name:'trade',
         component: () => import('@/views/TradePage.vue'),
+        children: [
+          {
+            path:'',
+            component: () => import('@/views/TradePages/BuyPage.vue')
+          },
+          {
+            path:'/buy',
+            component: () => import('@/views/TradePages/BuyPage.vue')
+          },
+          {
+            path:'/sale',
+            component: () => import('@/views/TradePages/SalePage.vue')
+          },
+          {
+            path:'/rem',
+            component: () => import('@/views/TradePages/RemPage.vue')
+          },
+          {
+            path:'/hold',
+            component: () => import('@/views/TradePages/HoldPage.vue')
+          },
+          {
+            path:'/query',
+            component: () => import('@/views/TradePages/QueryPage.vue')
+          }
+        ]
       },
       {
         path:'/account',
