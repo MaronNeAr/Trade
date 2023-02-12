@@ -3,8 +3,8 @@
     <nut-row>
         <nut-col :span="16">
             <nut-menu>
-                <nut-menu-item v-model="state.qcType" @change="handleQcChange" @open="canvasShow = false" @close="canvasShow = true" :options="state.qcOptions"></nut-menu-item>
-                <nut-menu-item v-model="state.bcType" @change="handleBcChange" @open="canvasShow = false" @close="canvasShow = true" :options="state.bcOptions"></nut-menu-item>
+                <nut-menu-item v-model="state.qcType" @change="handleQcChange" @open="qcMenuShow = false" @close="qcMenuShow = true" :options="state.qcOptions"></nut-menu-item>
+                <nut-menu-item v-model="state.scType" @change="handleBcChange" @open="bcMenuShow = false" @close="bcMenuShow = true" :options="state.bcOptions"></nut-menu-item>
             </nut-menu>
         </nut-col>
         <nut-col :span="8">
@@ -12,17 +12,17 @@
         </nut-col>
     </nut-row>
     <br />
-    <nut-row v-if="canvasShow">
+    <nut-row v-if="qcMenuShow && bcMenuShow">
         <nut-col :span="13">
             <k-canvas-base :tradePair="tradePair" class="k-canvas test-border"></k-canvas-base>
             <br />
-            <el-input-number class="line-style" size="large" v-model="state.price"  :step="Math.max(state.minPrice / 100, 0.000001)" :precision="6" :min="state.minPrice"></el-input-number>
+            <el-input-number class="line-style" size="large" v-model="state.price" :step="Math.max(state.minPrice / 100, 0.000001)" :precision="6" :min="state.minPrice"></el-input-number>
             <br />
             <br />
             <el-input-number class="line-style" size="large" v-model="state.number" :step="Math.max(state.maxNumber / 100, 0.01)" :precision="2" :min="0" :max="state.maxNumber"></el-input-number>
             <br />
             <br />
-            <nut-button class="line-style" type="primary">买入</nut-button>
+            <nut-button class="line-style" type="primary" @click="buy">买入</nut-button>
         </nut-col>
         <nut-col :span="1">&nbsp;</nut-col>
         <nut-col :span="10" class="market-depth">
@@ -46,7 +46,7 @@
 import KCanvasBase from '@/components/KCanvasBase.vue'
 import {
     computed,
-    onUpdated,
+    getCurrentInstance,
     reactive,
     ref,
     watch
@@ -54,21 +54,26 @@ import {
 import {
     HttpManager
 } from '@/api';
-import {
-    SearchBar
-} from '@nutui/nutui';
 import axios from 'axios';
+import { Toast } from '@nutui/nutui';
 export default {
     components: {
         KCanvasBase
     },
     setup() {
         let baseURL = 'https://api-aws.huobi.pro';
-        const canvasShow = ref(true);
+        const cookie = getCurrentInstance().appContext.config.globalProperties.$cookies;
+        const qcMenuShow = ref(true);
+        const bcMenuShow = ref(true);
         const searchPanelShow = computed(() => {
             return true;
         });
         const tradePair = ref("none");
+        const user = reactive({
+            username:cookie.get("username") ? cookie.get("username") : "尚未登录",
+            account:cookie.get("account") ? cookie.get("account") : "",
+            icon:cookie.get("icon") ? cookie.get("icon") : "img/icon/default.png"
+        });
         const state = reactive({
             qcOptions: [{
                     text: 'USDT',
@@ -103,7 +108,8 @@ export default {
                 return state.bcList.filter(item => item.text.indexOf(state.searchText) != -1 || item.value.indexOf(state.searchText) != -1 || item.value == 'none');
             }),
             qcType: 'usdt',
-            bcType: 'none',
+            scType: 'none',
+            bcType: computed(() => state.scType.replace(state.qcType, '')),
             searchText: '',
             buyDepth: [
                 ['--', '--'],
@@ -122,20 +128,53 @@ export default {
             price: 0,
             minPrice: 0,
             number: 0,
-            maxPrice:10000
+            maxNumber: 0,
+            status: false
         });
-        const handleQcChange = val => {
-            state.bcType = 'none';
-            state.searchText = '';
-            getCurrency();
-        };
-        const handleBcChange = val => {
-            tradePair.value = val;
-            getDepth();
-            getTickers();
+        const methods = {
+            handleQcChange: val => {
+                state.scType = 'none';
+                state.searchText = '';
+                getCurrency();
+            },
+            handleBcChange: val => {
+                tradePair.value = val;
+                getDepth();
+                getTickers();
+            },
+            buy: async() => {
+                Toast.loading("Waiting...", {
+                    duration: 0
+                });
+                await axios.get(baseURL + '/v2/market-status').then((response) => {
+                    if (response.data) state.status = true;
+                    else state.status = false;
+                }).catch(error => {
+                    state.status = false;
+                });
+                Toast.hide();
+                if (user.account == "") {
+                    Toast.warn("若要开始交易，请先登录");
+                    console.log("若要开始交易，请先登录");
+                    return;
+                } else if (!state.status) {
+                    Toast.warn("若要开始交易，请启用虚拟服务专用网络（VPN）");
+                    console.log("若要开始交易，请启用虚拟服务专用网络（VPN）");
+                    return;
+                }
+                let params = new URLSearchParams();
+                params.append("bc", state.bcType);
+                params.append("qc", state.qcType);
+                params.append("price", state.price);
+                params.append("size", state.number);
+                params.append("account", user.account);
+                const response = await HttpManager.buy(params) as ResponseBody;
+                if (response.success) Toast.success(response.message);
+                else Toast.warn(response.message);
+            }
         };
         watch(() => state.searchText, () => {
-            state.bcType = 'none';
+            state.scType = 'none';
         });
         const getCurrency = async () => {
             state.bcList = [{
@@ -157,15 +196,15 @@ export default {
             // state.bcList.sort((o1, o2) => o1.text > o2.text ? 1 : -1);
         };
         const getDepth = async () => {
-            await axios.get(baseURL + '/market/depth?symbol=' + state.bcType + '&depth=5&type=step0').then(response => {
+            await axios.get(baseURL + '/market/depth?symbol=' + state.scType + '&depth=5&type=step0').then(response => {
                 state.buyDepth = response.data.tick.bids;
                 state.sellDepth = response.data.tick.asks;
                 let params = new URLSearchParams();
                 params.append("content", JSON.stringify(response.data.tick));
-                HttpManager.postDepth(state.bcType, params);
+                HttpManager.postDepth(state.scType, params);
             }).catch(async error => {
                 // console.log(error);
-                const result = (await HttpManager.getDepth(state.bcType) as ResponseBody);
+                const result = (await HttpManager.getDepth(state.scType) as ResponseBody);
                 if (result.data) {
                     state.buyDepth = JSON.parse(result.data).bids;
                     state.sellDepth = JSON.parse(result.data).asks;
@@ -188,18 +227,19 @@ export default {
                 }
             });
         };
-        const getTickers = async() => {
-            await axios.get(baseURL + '/market/detail/merged?symbol=' + state.bcType).then(response => {
+        const getTickers = async () => {
+            await axios.get(baseURL + '/market/detail/merged?symbol=' + state.scType).then(response => {
                 let tick = response.data.tick;
                 state.price = tick.close;
                 state.minPrice = tick.ask[0];
                 state.number = tick.ask[1];
                 state.maxNumber = tick.ask[1];
+                state.status = true;
                 let params = new URLSearchParams();
                 params.append("content", JSON.stringify(response.data.tick));
-                HttpManager.postTicker(state.bcType, params);
+                HttpManager.postTicker(state.scType, params);
             }).catch(async error => {
-                const result = (await HttpManager.getTicker(state.bcType) as ResponseBody);
+                const result = (await HttpManager.getTicker(state.scType) as ResponseBody);
                 if (result.data) {
                     let tick = JSON.parse(result.data);
                     state.price = tick.close;
@@ -213,12 +253,12 @@ export default {
         getDepth();
         getTickers();
         return {
-            canvasShow,
+            qcMenuShow,
+            bcMenuShow,
             searchPanelShow,
             tradePair,
             state,
-            handleQcChange,
-            handleBcChange
+            ...methods
         }
     }
 }

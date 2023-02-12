@@ -6,6 +6,10 @@ const HttpManager = {
   login: (params) => post(`login`, params),
   //注册
   register: (params) => post(`register`, params),
+  //交易-买入
+  buy: (params) => post(`buy`, params),
+  //交易-卖出
+  sell: (params) => post(`sell`, params),
   //获取评论
   getComment: (tid) => get(`comment/${tid}`),
   //获取所有推文信息
