@@ -1,7 +1,7 @@
 package com.example.dao;
 
 import com.example.pojo.Tweet;
-import com.example.pojo.vo.TweetPlus;
+import com.example.pojo.vo.TweetVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ public interface TweetMapper {
 
     int updateTweetFollowersById (@Param("id") Integer id, @Param("followers") String followers);
 
-    List<TweetPlus> selectTweetsByAccount(@Param("account") String account);
+    List<TweetVO> selectTweetsByAccount(@Param("account") String account);
 
-    List<TweetPlus> selectAllTweets();
+    List<TweetVO> selectAllTweets();
 }

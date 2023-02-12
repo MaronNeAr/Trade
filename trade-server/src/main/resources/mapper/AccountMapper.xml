@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.AccountMapper">
+    <select id="selectAccountBlance" resultType="com.example.pojo.Account">
+        select * from v_account where account = #{account}
+    </select>
+
+    <select id="selectCurrencyBalance" resultType="BigDecimal">
+        select ${qc} from v_account where account = #{account}
+    </select>
+
+    <update id="updateCurrencyBalance">
+        update v_account
+        set ${qc} = #{value}
+        where account = #{account}
+    </update>
+</mapper>

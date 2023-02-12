@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.PositionMapper">
+    <select id="selectAllCurrencyByAccount" resultType="String">
+        select currency_code from position where account = #{account}
+    </select>
+
+    <select id="selectCurrencyInventoryByAccount" resultType="BigDecimal">
+        select inventory
+        from position
+        where account = #{account}
+        and currency_code = #{bc}
+    </select>
+
+    <insert id="insertCurrency">
+        insert into position (currency_code, display_name, inventory, account)
+        values (#{currencyCode}, #{displayName}, #{inventory}, #{account})
+    </insert>
+
+    <update id="updateCurrency">
+        update position
+        set inventory = #{inventory}
+        where currency_code = #{currencyCode}
+        and account = #{account}
+    </update>
+</mapper>

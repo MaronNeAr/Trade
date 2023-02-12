@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.config.common.ErrorMessage;
 import com.example.config.common.SuccessMessage;
 import com.example.pojo.User;
+import com.example.pojo.vo.UserVO;
 import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +50,9 @@ public class UserController {
         int flag = userService.loginUser(account, password);
         if (flag == -1) return new ErrorMessage("您尚未注册").getMessage();
         else if (flag == 0) return new ErrorMessage("您的账号或者密码有误").getMessage();
-        else return new SuccessMessage<User>("登录成功", userService.getUserByAccount(account)).getMessage();
+        else {
+            User user = userService.getUserByAccount(account);
+            return new SuccessMessage<UserVO>("登录成功", new UserVO(user.getUsername(), user.getAccount(), user.getIcon())).getMessage();
+        }
     }
 }

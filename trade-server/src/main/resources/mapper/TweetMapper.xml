@@ -3,14 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.dao.TweetMapper">
-    <select id="selectTweetsByAccount" resultType="com.example.pojo.vo.TweetPlus">
+    <select id="selectTweetsByAccount" resultType="com.example.pojo.vo.TweetVO">
         select tweet.id, content, picture, position, time, followers, username, icon
         from tweet, v_user
         where tweet.author = #{account}
         and tweet.author = v_user.account;
     </select>
 
-    <select id="selectAllTweets" resultType="com.example.pojo.vo.TweetPlus">
+    <select id="selectAllTweets" resultType="com.example.pojo.vo.TweetVO">
         select tweet.id, content, picture, position, time, followers, username, icon
         from tweet
         left join v_user

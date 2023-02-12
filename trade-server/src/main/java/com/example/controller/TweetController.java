@@ -4,12 +4,14 @@ import com.example.config.common.ErrorMessage;
 import com.example.config.common.SuccessMessage;
 import com.example.constant.Constants;
 import com.example.pojo.Tweet;
-import com.example.pojo.vo.TweetPlus;
+import com.example.pojo.TweetComment;
+import com.example.pojo.vo.TweetVO;
 import com.example.service.TweetService;
 import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -38,7 +40,7 @@ public class TweetController {
     @GetMapping("/tweets")
     public Object getTweetList() {
         try {
-            return new SuccessMessage<List<TweetPlus>>("获取推文信息成功", tweetService.getAllTweet()).getMessage();
+            return new SuccessMessage<List<TweetVO>>("获取推文信息成功", tweetService.getAllTweet()).getMessage();
         } catch (Exception e) {
             System.out.println(e);
             return new ErrorMessage("获取推文信息失败").getMessage();
@@ -73,6 +75,42 @@ public class TweetController {
         } catch (Exception e) {
             System.out.println(e);
             return new ErrorMessage("点赞失败，服务器内部错误").getMessage();
+        }
+    }
+
+    @GetMapping("/comment/{tid}")
+    public Object getTweetCommentList(@PathVariable("tid") Integer tid) {
+        try {
+            return new SuccessMessage<List<TweetComment>>("获取推文评论成功", tweetService.getAllTweetComment(tid)).getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("获取推文信评论失败").getMessage();
+        }
+    }
+
+    @PostMapping("/comment")
+    public Object addTweetComment(HttpServletRequest req) {
+        try {
+            TweetComment tweetComment = new TweetComment(
+                    null,
+                    req.getParameter("observer"),
+                    req.getParameter("comment"),
+                    Integer.valueOf(req.getParameter("tid"))
+            );
+            return new SuccessMessage<Boolean>("发表评论成功", tweetService.addTweetComment(tweetComment)).getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("发表评论失败").getMessage();
+        }
+    }
+
+    @PostMapping("/comment/{tid}")
+    public Object deleteTweetCommentList(@PathVariable("tid") Integer tid) {
+        try {
+            return new SuccessMessage<Boolean>("删除推文评论成功", tweetService.deleteTweetComment(tid)).getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("获取推文评论失败").getMessage();
         }
     }
 }
