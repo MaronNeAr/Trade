@@ -1,6 +1,6 @@
 <template>
 <div>
-    <nut-searchbar v-model="searchValue" placeholder="请输入产品代码/简拼" class="search">
+    <nut-searchbar background="linear-gradient(to right, #fff, red)" v-model="searchValue" placeholder="请输入产品代码/简拼" class="search">
         <template v-slot:leftout>
             <nut-icon @click="clickLeft" size="20" name="horizontal"></nut-icon>
         </template>
@@ -71,7 +71,7 @@ export default {
 .search {
     position: relative;
     width: 100%;
-    height: 5%;
+    height: 6%;
 }
 
 .header {

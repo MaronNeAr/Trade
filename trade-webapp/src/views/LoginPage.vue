@@ -46,7 +46,7 @@ export default {
                 cookie.set("account", result.account);
                 cookie.set("username", result.username);
                 cookie.set("icon", result.icon);
-                router.push('/');
+                router.push('/account');
             } else Notify.danger(response.message);
         }
 
@@ -125,7 +125,7 @@ div>a {
 }
 
 .content {
-    background: url("http://hbimg.b0.upaiyun.com/be7f8a428c1c30c2807a94c14ce2520037f60f2c7866b-mFiR6W_fw658");
+    background: url("@/assets/images/login_bg.png");
     width: 100%;
     height: 100%;
     position: fixed;

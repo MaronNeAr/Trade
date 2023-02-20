@@ -19,7 +19,7 @@
 
     <insert id="insertTweet">
         insert into tweet (content, picture, position, time, followers, author)
-        values (#{content}, #{picture}, #{position}, #{time}, #{followers}, #{account})
+        values (#{content}, #{picture}, #{position}, #{time}, #{followers}, #{author})
     </insert>
 
     <update id="updateTweetFollowersById">

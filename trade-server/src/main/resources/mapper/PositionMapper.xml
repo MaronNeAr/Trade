@@ -7,6 +7,12 @@
         select currency_code from position where account = #{account}
     </select>
 
+    <select id="selectPositionByAccount" resultType="com.example.pojo.Position">
+        select *
+        from position
+        where account = #{account}
+    </select>
+
     <select id="selectCurrencyInventoryByAccount" resultType="BigDecimal">
         select inventory
         from position

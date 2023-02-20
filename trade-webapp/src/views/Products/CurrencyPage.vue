@@ -9,8 +9,8 @@
                         &emsp;
                         <span class="name">{{item.bcdn}}</span>
                         &emsp;
-                        <span class="green" v-if="item.state == 'online'">{{ item.w }}</span>
-                        <span class="red" v-else>{{ item.w }}</span>
+                        <span class="number green" v-if="item.state == 'online'">{{ item.price }}</span>
+                        <span class="number red" v-else>----</span>
                     </template>
                     <template v-slot:sTitle>
                         <div class="green" v-if="item.state == 'online'">{{ item.state }}</div>
@@ -37,13 +37,17 @@ import KCanvas from '@/components/KCanvas.vue'
 import {
     Toast
 } from '@nutui/nutui';
-import { writeFile } from 'node:fs';
-import { HttpManager } from '@/api';
+import {
+    writeFile
+} from 'node:fs';
+import {
+    HttpManager
+} from '@/api';
 export default {
     props: {
-        type : String
+        type: String
     },
-    components:{
+    components: {
         KCanvas
     },
     setup(props) {
@@ -53,7 +57,7 @@ export default {
         const symbols = ref([]);
         const currentSymblols = ref([]);
         const refreshHasMore = ref(true);
-        
+
         watch(() => props.type, (value) => {
             activeNames.value = [];
             currencies.value = [];
@@ -108,8 +112,28 @@ export default {
             const result = (await HttpManager.getCurrency() as ResponseBody);
             if (result.data) {
                 symbols.value = JSON.parse(result.data);
-                currentSymblols.value = symbols.value.filter((item) => item.qc == props.type);
+                getPrice();
             }
+        }
+
+        async function getPrice() {
+            const result = await HttpManager.getTickers() as ResponseBody;
+            if (result.data) {
+                // console.log(result.data);
+                const resultData = JSON.parse(result.data);
+                symbols.value = symbols.value.map(item => {
+                    const matchedItem = resultData.find(obj => obj.symbol == item.sc);
+                    if (matchedItem) {
+                        return {
+                            ...item,
+                            price: matchedItem.close
+                        };
+                    } else {
+                        return item;
+                    }
+                });
+            }
+            currentSymblols.value = symbols.value.filter((item) => item.qc == props.type);
             for (let i = 0; i < 20; i++) {
                 if (currentSymblols.value.length == 0) break;
                 currencies.value.push(currentSymblols.value.shift());
@@ -172,7 +196,10 @@ export default {
 }
 
 .number {
-    font-size: 20px;
+    font-size: 18px;
+    width: 100px;
+    text-align: right;
+    display: inline-block;
 }
 
 .red {

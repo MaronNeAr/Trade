@@ -1,7 +1,7 @@
 <template>
 <div class="main-page">
     <div class="account-panel">
-        <router-link to="login">
+        <router-link :to="infoUrl">
             <nut-row>
                 <nut-col :span="8" class="panel-left">
                     <img class="head-icon" :src="attachImageUrl(user.icon)" />
@@ -17,24 +17,26 @@
     </div>
     <div class="account-currency">
         <nut-row>
-            <nut-col :span="12" class="currency-left">
-                <div>
+            <router-link to="detail">
+                <nut-col :span="12" class="currency-left">
                     <div>
-                        <nut-icon name="people" size="12"></nut-icon>
-                        <span> 合计资产</span>
+                        <div>
+                            <nut-icon name="people" size="12"></nut-icon>
+                            <span> 合计资产</span>
+                        </div>
+                        <div>
+                            <nut-icon name="retweet" size="12"></nut-icon>
+                            <span> 交易明细</span>
+                        </div>
                     </div>
-                    <div>
-                        <nut-icon name="retweet" size="12"></nut-icon>
-                        <span> 交易明细</span>
-                    </div>
-                </div>
-            </nut-col>
-            <nut-col :span="12" class="currency-right">
-                <div>
+                </nut-col>
+            </router-link>
+            <router-link :to="routerUrl">
+                <nut-col :span="12" class="currency-right">
                     <nut-icon name="checked"></nut-icon>
                     <div>钱包</div>
-                </div>
-            </nut-col>
+                </nut-col>
+            </router-link>
         </nut-row>
     </div>
     <div class="trade-details">
@@ -42,8 +44,6 @@
             <template #content>
                 <nut-tabs v-model="detailsType" @click="changeTabList" auto-height>
                     <nut-tabpane pane-key="cc" title="持仓">
-                    </nut-tabpane>
-                    <nut-tabpane pane-key="dc" title="调仓">
                     </nut-tabpane>
                     <nut-tabpane pane-key="ls" title="历史">
                     </nut-tabpane>
@@ -59,32 +59,38 @@
 import {
     getCurrentInstance,
     reactive,
-    ref
+    toRefs
 } from 'vue';
 import {
     useRouter
 } from 'vue-router';
-import { HttpManager } from '@/api';
+import {
+    HttpManager
+} from '@/api';
 export default {
     setup() {
         const router = useRouter();
         const cookie = getCurrentInstance().appContext.config.globalProperties.$cookies;
-        const detailsType = ref('cc');
         const user = reactive({
-            username:cookie.get("username") ? cookie.get("username") : "点击登录",
-            account:cookie.get("account") ? "账号：" + cookie.get("account") : "",
-            icon:cookie.get("icon") ? cookie.get("icon") : "img/icon/default.png"
+            username: cookie.get("username") ? cookie.get("username") : "点击登录",
+            account: cookie.get("account") ? "账号：" + cookie.get("account") : "",
+            icon: cookie.get("icon") ? cookie.get("icon") : "img/icon/default.png"
+        });
+        const state = reactive({
+            detailsType: "cc",
+            routerUrl: cookie.get("account") ? "/wallet" : "/login",
+            infoUrl: cookie.get("account") ? "/info" : "/login"
         });
         const methods = {
             changeTabList(tab: any) {
-                detailsType.value = tab.paneKey as string;
-                router.push(detailsType.value)
+                state.detailsType = tab.paneKey as string;
+                router.push(state.detailsType)
             }
         }
         return {
-            detailsType,
             user,
             attachImageUrl: HttpManager.attachImageUrl,
+            ...toRefs(state),
             ...methods
         }
     }

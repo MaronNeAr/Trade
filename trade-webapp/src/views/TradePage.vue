@@ -6,7 +6,7 @@
             <nut-tabs v-model="state.tab" @click="changeTabList" auto-height>
                 <nut-tabpane pane-key="buy" title="买入"></nut-tabpane>
                 <nut-tabpane pane-key="sale" title="卖出"></nut-tabpane>
-                <nut-tabpane pane-key="rem" title="撤单"></nut-tabpane>
+                <!-- <nut-tabpane pane-key="rem" title="撤单"></nut-tabpane> -->
                 <nut-tabpane pane-key="hold" title="持仓"></nut-tabpane>
                 <nut-tabpane pane-key="query" title="查询"></nut-tabpane>
             </nut-tabs>
@@ -47,17 +47,18 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .trade-view {
     margin: 0 10px;
 }
 .top-box {
     background-color: #bd3124;
     color: #fff;
-    height: 50px;
+    height: 6%;
     font-size: 20px;
+    display: grid;
     text-align: center;
-    line-height: 50px;
+    align-items: center;
     box-shadow: 3px 2px #cfcfcf;
 }
 

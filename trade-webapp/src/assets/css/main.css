@@ -1,6 +1,8 @@
 * {
   margin: 0%;
   padding: 0%;
+}
+div {
   touch-action: auto;
 
   animation: fadeInAnimation ease 0.5s;
@@ -8,6 +10,17 @@
   /*设置动画播放次数*/
   animation-fill-mode: forwards;
   /*设置样式以在动画不播放时应用元素。forward是设置动画结束后，使用元素的结束属性值*/
+}
+
+a{
+  text-decoration: none;
+  color: unset;
+  font-family: sans-serif;
+  display: unset;
+}
+
+.half-br {
+  height: 5px;
 }
 
 .test-border {

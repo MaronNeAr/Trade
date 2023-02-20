@@ -15,4 +15,10 @@
         insert into v_user (account, password, status, admin)
         values (#{account}, #{password}, 0, 0)
     </insert>
+    <update id="updateUser">
+        update v_user
+        set icon = #{icon},
+        username = #{username}
+        where account = #{account}
+    </update>
 </mapper>

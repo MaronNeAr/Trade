@@ -39,6 +39,29 @@ public class DataController {
         }
     }
 
+    @PostMapping("/tickers")
+    public Object setTickers(HttpServletRequest req) {
+        try {
+            String content = req.getParameter("content");
+            fileService.writeToFile("data/tickers.data", content);
+            return new SuccessMessage("上传币种价格成功").getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("上传币种价格失败").getMessage();
+        }
+    }
+
+    @GetMapping("/tickers")
+    public Object getTickers() {
+        try {
+            String content = fileService.readFromFile("data/tickers.data");
+            return new SuccessMessage<String>("获取币种价格成功", content).getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("获取币种价格失败").getMessage();
+        }
+    }
+
     @PostMapping("/k-chart/{sc}")
     public Object setChartData(HttpServletRequest req, @PathVariable String sc) {
         try {

@@ -31,4 +31,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.component('v-chart', VueEcharts);
 app.config.globalProperties.$echarts = echarts;
 app.config.globalProperties.$cookies = VueCookies;
-app.use(store).use(router).use(ElementPlus).use(NutUI).mount("#app");
+app.use(store).use(router).use(ElementPlus).use(NutUI);
+app.mount("#app");

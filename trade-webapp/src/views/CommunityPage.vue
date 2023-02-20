@@ -16,8 +16,8 @@
     <br />
     <br />
     <tweet v-for="tweet in tweets" :key="tweet.id" :tweet="tweet"></tweet>
-    <nut-drag direction="y" :style="{right:'0px',bottom:'240px'}">
-        <nut-fixednav un-active-text="NEW" active-text="BACK" v-model:visible="visible" :nav-list="navList" />
+    <nut-drag direction="y" :style="{right:'0px',bottom:'360px'}">
+        <nut-fixednav un-active-text="NEW" active-text="BACK" v-model:visible="visible" :nav-list="navList" @selected="(call) => {openPublish(call)}" />
     </nut-drag>
     <nut-overlay v-model:visible="leftDialogShow">
         <nut-cell-group class="left-dialog">
@@ -25,30 +25,38 @@
             <nut-cell class="hover-change">我的草稿</nut-cell>
             <nut-cell class="hover-change">创作中心</nut-cell>
             <nut-cell class="hover-change">浏览记录</nut-cell>
-            <nut-cell class="hover-change">发现好友</nut-cell>
+            <nut-cell class="hover-change">发表推文</nut-cell>
         </nut-cell-group>
     </nut-overlay>
+    <nut-popup position="bottom" closeable close-icon-position="top-left" round :style="{ height: '320px' }" v-model:visible="popupVisible">
+        <div class="publish">
+            <nut-button class="publish-btn" type="success" plain @click="publish">发表</nut-button>
+        </div>
+        <br />
+        <br />
+        <br />
+        <nut-input v-model="textarea" type="textarea" show-word-limit rows="2" max-length="50" placeholder="分享新鲜事..." />
+        <nut-uploader class="upload-img" url="http://127.0.0.1:8888/publish" ref="uploadRef" :auto-upload="false"></nut-uploader>
+    </nut-popup>
 </div>
 </template>
 
 <script lang="ts">
 import {
-    computed,
     getCurrentInstance,
     onBeforeUnmount,
     onMounted,
     reactive,
-    ref
+    ref,
+    toRefs
 } from 'vue';
 import Tweet from '@/components/Tweet.vue';
 import {
-    watch
-} from 'original-fs';
+    HttpManager
+} from '@/api';
 import {
-    fa
-} from 'element-plus/lib/locale';
-import { get } from '@/api/request';
-import { HttpManager } from '@/api';
+    Toast
+} from '@nutui/nutui';
 
 export default {
     components: {
@@ -63,9 +71,14 @@ export default {
         const overlayShow = ref(false);
         const head = ref(null);
         const user = reactive({
-            username:cookie.get("username") ? cookie.get("username") : "尚未登录",
-            account:cookie.get("account") ? cookie.get("account") : "",
-            icon:cookie.get("icon") ? cookie.get("icon") : "img/icon/default.png"
+            username: cookie.get("username") ? cookie.get("username") : "尚未登录",
+            account: cookie.get("account") ? cookie.get("account") : "",
+            icon: cookie.get("icon") ? cookie.get("icon") : "img/icon/default.png"
+        });
+        const state = reactive({
+            popupVisible: false,
+            textarea: '',
+            uploadRef: null
         });
         const navList = reactive([{
                 id: 1,
@@ -79,16 +92,38 @@ export default {
             }
         ]);
         const methods = {
+            openPublish(call) {
+                console.log(call.item);
+                state.popupVisible = true;
+                visible.value = false;
+            },
+            publish: async () => {
+                if (user.account == "") {
+                    Toast.warn("请先登录");
+                    return;
+                }
+                let params = new URLSearchParams();
+                params.append("account", user.account);
+                params.append("content", state.textarea);
+                params.append("position", "上海市杨浦区");
+                params.append("image", state.uploadRef.fileList.length > 0 ? state.uploadRef.fileList[0].url : "null");
+                const response = await HttpManager.postTweet(params) as ResponseBody;
+                if (response.success) Toast.success(response.message);
+                else Toast.fail(response.message);
+                getData();
+                state.popupVisible = false;
+            },
             handleScroll() {
                 if (head.value == null) return;
                 else if (head.value.getBoundingClientRect().top < -240) navShow.value = true;
                 else navShow.value = false;
             }
         }
-        
+
         async function getData() {
             const result = (await HttpManager.getAllTweets()) as ResponseBody;
             tweets.value = result.data;
+            tweets.value.sort((o1, o2) => o2.time - o1.time);
         }
 
         onMounted(() => {
@@ -108,6 +143,7 @@ export default {
             user,
             navList,
             attachImageUrl: HttpManager.attachImageUrl,
+            ...toRefs(state),
             ...methods
         }
     }
@@ -158,5 +194,17 @@ export default {
 
 .nut-cell:hover {
     background-color: #f5f5f5;
+}
+
+.publish {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+}
+
+.upload-img {
+    margin: 0 20px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 </style>

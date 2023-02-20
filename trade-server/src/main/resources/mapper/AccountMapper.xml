@@ -3,17 +3,42 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.dao.AccountMapper">
-    <select id="selectAccountBlance" resultType="com.example.pojo.Account">
+    <select id="selectAccount" resultType="com.example.pojo.Account">
         select * from v_account where account = #{account}
     </select>
 
-    <select id="selectCurrencyBalance" resultType="BigDecimal">
+    <select id="selectUsdtByAccount" resultType="java.math.BigDecimal">
+        select usdt from v_account where account = #{account}
+    </select>
+
+    <select id="selectBalanceByAccount" resultType="java.math.BigDecimal">
+        select balance from v_account where account = #{account}
+    </select>
+
+    <select id="selectCurrencyBalance" resultType="java.math.BigDecimal">
         select ${qc} from v_account where account = #{account}
     </select>
+
+    <insert id="insertAccount">
+        insert into v_account (balance, usdt, btc, eth, ht, husd, usdd, account)
+        values (10000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, #{account})
+    </insert>
 
     <update id="updateCurrencyBalance">
         update v_account
         set ${qc} = #{value}
+        where account = #{account}
+    </update>
+
+    <update id="updateUsdtByRecharge">
+        update v_account
+        set usdt = #{usdt}
+        where account = #{account}
+    </update>
+
+    <update id="updateBalanceByRecharge">
+        update v_account
+        set balance = #{balance}
         where account = #{account}
     </update>
 </mapper>

@@ -59,4 +59,12 @@ public class TradeService {
         tradeDetailMapper.insertTradeDetail(new TradeDetail(null, "sell", bc, qc, price, size, System.currentTimeMillis(), account));
         return 1;
     }
+
+    public List<TradeDetail> getTradeDetails(String account) {
+        return tradeDetailMapper.selectAllTradeDetailsByAccount(account);
+    }
+
+    public List<Position> getPositions(String account) {
+        return positionMapper.selectPositionByAccount(account);
+    }
 }

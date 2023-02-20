@@ -39,11 +39,16 @@
             </div>
         </nut-col>
     </nut-row>
+    <div v-if="qcMenuShow && bcMenuShow">
+        <nut-divider></nut-divider>
+        <hold-page></hold-page>
+    </div>
 </div>
 </template>
 
 <script lang="ts">
 import KCanvasBase from '@/components/KCanvasBase.vue'
+import HoldPage from './HoldPage.vue';
 import {
     computed,
     getCurrentInstance,
@@ -55,10 +60,13 @@ import {
     HttpManager
 } from '@/api';
 import axios from 'axios';
-import { Toast } from '@nutui/nutui';
+import {
+    Toast
+} from '@nutui/nutui';
 export default {
     components: {
-        KCanvasBase
+        KCanvasBase,
+        HoldPage
     },
     setup() {
         let baseURL = 'https://api-aws.huobi.pro';
@@ -70,9 +78,9 @@ export default {
         });
         const tradePair = ref("none");
         const user = reactive({
-            username:cookie.get("username") ? cookie.get("username") : "尚未登录",
-            account:cookie.get("account") ? cookie.get("account") : "",
-            icon:cookie.get("icon") ? cookie.get("icon") : "img/icon/default.png"
+            username: cookie.get("username") ? cookie.get("username") : "尚未登录",
+            account: cookie.get("account") ? cookie.get("account") : "",
+            icon: cookie.get("icon") ? cookie.get("icon") : "img/icon/default.png"
         });
         const state = reactive({
             qcOptions: [{
@@ -142,7 +150,7 @@ export default {
                 getDepth();
                 getTickers();
             },
-            buy: async() => {
+            buy: async () => {
                 Toast.loading("Waiting...", {
                     duration: 0
                 });

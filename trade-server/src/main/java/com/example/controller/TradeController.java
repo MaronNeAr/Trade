@@ -2,6 +2,8 @@ package com.example.controller;
 
 import com.example.config.common.ErrorMessage;
 import com.example.config.common.SuccessMessage;
+import com.example.pojo.Position;
+import com.example.pojo.TradeDetail;
 import com.example.service.TradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 public class TradeController {
@@ -48,6 +51,28 @@ public class TradeController {
         } catch (Exception e) {
             System.out.println(e);
             return new ErrorMessage("交易失败").getMessage();
+        }
+    }
+
+    @PostMapping("/position")
+    public Object getPosition(HttpServletRequest req) {
+        try {
+            String account = req.getParameter("account");
+            return new SuccessMessage<List<Position>>("获取持仓情况成功", tradeService.getPositions(account)).getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("获取持仓情况失败").getMessage();
+        }
+    }
+
+    @PostMapping("/detail")
+    public Object getTradeDetails(HttpServletRequest req) {
+        try {
+            String account = req.getParameter("account");
+            return new SuccessMessage<List<TradeDetail>>("获取交易明细成功", tradeService.getTradeDetails(account)).getMessage();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ErrorMessage("获取交易明细失败").getMessage();
         }
     }
 }

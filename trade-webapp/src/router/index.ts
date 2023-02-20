@@ -79,28 +79,39 @@ const routes: Array<RouteRecordRaw> = [
         children: [
           {
             path:'',
-            component: () => import('@/views/TradeDetails/PositionPage.vue'),
+            component: () => import('@/views/TradePages/HoldPage.vue'),
           },
           {
             path:'/cc',
-            component: () => import('@/views/TradeDetails/PositionPage.vue'),
-          },
-          {
-            path:'/dc',
-            component: () => import('@/views/TradeDetails/AdjustPage.vue'),
+            component: () => import('@/views/TradePages/HoldPage.vue'),
           },
           {
             path:'/ls',
-            component: () => import('@/views/TradeDetails/HistoryPage.vue'),
+            component: () => import('@/views/TradePages/QueryPage.vue'),
           }
         ]
       },
+      {
+        path: '/info',
+        component: () => import('@/views/InfoPage.vue')
+      },
+      {
+        path: '/detail',
+        component: () => import('@/views/TradePages/TradeDetailPage.vue')
+      },
+      {
+        path: '/wallet',
+        component: () => import('@/views/WalletPage.vue')
+      }
     ]
   },
   {
     path: '/login',
-    component: () => import('@/views/LoginPage.vue'),
-    meta: { title: '自述文件' }
+    component: () => import('@/views/LoginPage.vue')
+  },
+  {
+    path: '/test',
+    component: () => import('@/components/AddressSelect.vue')
   }
 ]
 
