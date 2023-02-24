@@ -26,9 +26,6 @@ public class TweetController {
     @Autowired
     TweetService tweetService;
 
-    @Autowired
-    UserService userService;
-
     @Configuration
     public static class MyPicConfig implements WebMvcConfigurer {
         @Override
@@ -55,6 +52,7 @@ public class TweetController {
             String content = req.getParameter("content");
             String position = req.getParameter("position");
             String image = req.getParameter("image");
+            if (account == null || content == null || position == null) return new ErrorMessage("参数缺失").getMessage();
             return new SuccessMessage<Boolean>("发表成功", tweetService.publishTweet(account, content, position, image)).getMessage();
         } catch (Exception e) {
             System.out.println(e);
