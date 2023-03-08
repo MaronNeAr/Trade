@@ -1,6 +1,13 @@
 <template>
 <div>
-    <div class="top-box">普通交易</div>
+    <nut-navbar class="top-box">
+        <template #content>
+            <div>普通交易</div>
+        </template>
+        <template #right>
+            <router-link to="/deposit">托管</router-link>
+        </template>
+    </nut-navbar>
     <nut-navbar class="header">
         <template #content>
             <nut-tabs v-model="state.tab" @click="changeTabList" auto-height>
@@ -56,12 +63,9 @@ export default {
     color: #fff;
     height: 6%;
     font-size: 20px;
-    display: grid;
-    text-align: center;
-    align-items: center;
+    line-height: 50px;
     box-shadow: 3px 2px #cfcfcf;
 }
-
 .content {
     height: 500px;
 }

@@ -6,15 +6,15 @@ import java.math.BigDecimal;
 
 @Data
 public class Account {
-    Integer id;
-    String account;
-    BigDecimal balance;
-    BigDecimal usdt;
-    BigDecimal btc;
-    BigDecimal eth;
-    BigDecimal ht;
-    BigDecimal husd;
-    BigDecimal usdd;
+    private Integer id;
+    private String account;
+    private BigDecimal balance;
+    private BigDecimal usdt;
+    private BigDecimal btc;
+    private BigDecimal eth;
+    private BigDecimal ht;
+    private BigDecimal husd;
+    private BigDecimal usdd;
 
     public Account(Integer id, String account, BigDecimal balance, BigDecimal usdt, BigDecimal btc, BigDecimal eth, BigDecimal ht, BigDecimal husd, BigDecimal usdd) {
         this.id = id;

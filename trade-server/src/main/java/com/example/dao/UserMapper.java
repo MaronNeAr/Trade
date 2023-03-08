@@ -15,5 +15,7 @@ public interface UserMapper {
 
     int updateUser(UserVO userVO);
 
+    int updatePhone(@Param("account")String account, @Param("phone") String phone);
+
     List<User> selectAllUsers();
 }

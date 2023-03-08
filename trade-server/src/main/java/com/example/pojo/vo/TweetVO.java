@@ -4,12 +4,12 @@ import lombok.Data;
 
 @Data
 public class TweetVO {
-    Integer id;
-    String content;
-    String picture;
-    String position;
-    String time;
-    String followers;
-    String username;
-    String icon;
+    private Integer id;
+    private String content;
+    private String picture;
+    private String position;
+    private String time;
+    private String followers;
+    private String username;
+    private String icon;
 }

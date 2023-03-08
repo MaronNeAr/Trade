@@ -21,4 +21,9 @@
         username = #{username}
         where account = #{account}
     </update>
+    <update id="updatePhone">
+        update v_user
+        set phone = #{phone}
+        where account = #{account}
+    </update>
 </mapper>

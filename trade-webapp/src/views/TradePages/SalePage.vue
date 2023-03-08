@@ -22,7 +22,7 @@
             <el-input-number class="line-style" size="large" v-model="state.number" :step="Math.max(state.minNumber / 100, 0.01)" :precision="2" :min="state.minNumber"></el-input-number>
             <br />
             <br />
-            <nut-button class="line-style" type="info" @click="sell">卖出</nut-button>
+            <nut-button class="line-style" type="info" @click="alertShow = true">卖出</nut-button>
         </nut-col>
         <nut-col :span="1">&nbsp;</nut-col>
         <nut-col :span="10" class="market-depth">
@@ -43,6 +43,7 @@
         <nut-divider></nut-divider>
         <hold-page></hold-page>
     </div>
+    <c-alert :isShow="alertShow" :alertMes="alertMes" @Commit="sell" @Cancel="alertShow = false"></c-alert>
 </div>
 </template>
 
@@ -50,6 +51,7 @@
 <script lang="ts">
 import KCanvasBase from '@/components/KCanvasBase.vue'
 import HoldPage from './HoldPage.vue';
+import CAlert from "@/components/Alert.vue";
 import {
     computed,
     getCurrentInstance,
@@ -67,7 +69,8 @@ import {
 export default {
     components: {
         KCanvasBase,
-        HoldPage
+        HoldPage,
+        CAlert
     },
     setup() {
         let baseURL = 'https://api-aws.huobi.pro';
@@ -76,6 +79,13 @@ export default {
         const bcMenuShow = ref(true);
         const searchPanelShow = computed(() => {
             return true;
+        });
+        const alertShow = ref(false);
+        const alertMes = reactive({
+            name: computed(() => state.scType.toUpperCase()),
+            type: computed(() => state.qcType.toUpperCase()),
+            price: computed(() => state.price),
+            amount: computed(() => state.number)
         });
         const tradePair = ref("none");
         const user = reactive({
@@ -152,6 +162,7 @@ export default {
                 getTickers();
             },
             sell: async () => {
+                alertShow.value = false;
                 Toast.loading("Waiting...", {
                     duration: 0
                 });
@@ -265,6 +276,8 @@ export default {
             qcMenuShow,
             bcMenuShow,
             searchPanelShow,
+            alertShow,
+            alertMes,
             tradePair,
             state,
             ...methods

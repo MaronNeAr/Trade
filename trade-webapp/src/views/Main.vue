@@ -4,6 +4,7 @@
     <nut-tabbar @tab-switch="tabSwitch" class="footer">
         <nut-tabbar-item to="/" tab-title="行情" icon="category"></nut-tabbar-item>
         <nut-tabbar-item to="community" tab-title="社区" icon="find"></nut-tabbar-item>
+        <nut-tabbar-item to="chat" tab-title="CHAT" icon="message"></nut-tabbar-item>
         <nut-tabbar-item to="trade" tab-title="交易" icon="dshop"></nut-tabbar-item>
         <nut-tabbar-item to="account" tab-title="账户" icon="my"></nut-tabbar-item>
     </nut-tabbar>

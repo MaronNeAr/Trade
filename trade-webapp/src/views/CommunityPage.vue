@@ -93,7 +93,7 @@ export default {
         ]);
         const methods = {
             openPublish(call) {
-                console.log(call.item);
+                // console.log(call.item);
                 state.popupVisible = true;
                 visible.value = false;
             },
@@ -106,7 +106,7 @@ export default {
                 params.append("account", user.account);
                 params.append("content", state.textarea);
                 params.append("position", "上海市杨浦区");
-                params.append("image", state.uploadRef.fileList.length > 0 ? state.uploadRef.fileList[0].url : "null");
+                params.append("image", state.uploadRef.fileList.length > 0 ? state.uploadRef?.fileList[0]?.url : "null");
                 const response = await HttpManager.postTweet(params) as ResponseBody;
                 if (response.success) Toast.success(response.message);
                 else Toast.fail(response.message);

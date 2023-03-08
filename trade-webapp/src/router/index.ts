@@ -42,6 +42,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/CommunityPage.vue'),
       },
       {
+        path: '/chat',
+        name: 'chat',
+        component: () => import('@/views/ChatPage.vue')
+      },
+      {
         path:'/trade',
         name:'trade',
         component: () => import('@/views/TradePage.vue'),
@@ -102,7 +107,11 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/wallet',
         component: () => import('@/views/WalletPage.vue')
-      }
+      },
+      {
+        path: '/deposit',
+        component: () => import('@/views/TradePages/DepositPage.vue')
+      },
     ]
   },
   {

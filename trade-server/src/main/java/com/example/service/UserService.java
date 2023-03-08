@@ -14,7 +14,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -89,6 +88,11 @@ public class UserService {
             outputStream.write(bytes);
         }
         return userMapper.updateUser(new UserVO(userVO.getUsername(), userVO.getAccount(), picUrl)) == 1;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public  Boolean updateUserPhone(String account, String phone) {
+        return userMapper.updatePhone(account, phone) > 0;
     }
 
     public List<User> getAllUsers() {

@@ -7,6 +7,10 @@ const HttpManager = {
   register: (params) => post(`register`, params),
   //更新用户信息
   updateUserInfo: (params) => post(`update`, params),
+  //更新用户电话
+  updateUserPhone: (params) => post(`update/phone`, params),
+  //发送验证码
+  sendAuthCode: (params) => post(`send/auth-code`, params),
   //获取账户余额
   getAccount: (params) => post(`account`, params),
   //充值

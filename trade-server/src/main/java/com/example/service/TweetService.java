@@ -5,6 +5,7 @@ import com.example.dao.TweetMapper;
 import com.example.pojo.Tweet;
 import com.example.pojo.TweetComment;
 import com.example.pojo.vo.TweetVO;
+import com.example.utils.SerializationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,9 @@ public class TweetService {
 
     @Autowired
     RedisService redisService;
+
+    @Autowired
+    MessageService messageService;
 
     public List<TweetVO> getSelfTweet(String account) {
         return tweetMapper.selectTweetsByAccount(account);
@@ -51,9 +55,11 @@ public class TweetService {
                 outputStream.write(bytes);
             }
         }
-        boolean flag = tweetMapper.insertTweet(new Tweet(null, content, picUrl, position, System.currentTimeMillis(), "", account)) > 0;
-        redisService.set("tweetList", tweetMapper.selectAllTweets());
-        return flag;
+        messageService.publishMessage(SerializationUtil.serialize(new Tweet(null, content, picUrl, position, System.currentTimeMillis(), "", account)));
+//        boolean flag = tweetMapper.insertTweet(new Tweet(null, content, picUrl, position, System.currentTimeMillis(), "", account)) > 0;
+//        redisService.set("tweetList", tweetMapper.selectAllTweets());
+//        return flag;
+        return true;
     }
 
     public boolean followTweet(Integer id, String followers) {

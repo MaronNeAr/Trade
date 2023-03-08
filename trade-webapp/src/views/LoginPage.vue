@@ -45,6 +45,8 @@ export default {
                 console.log(result);
                 cookie.set("account", result.account);
                 cookie.set("username", result.username);
+                cookie.set("phone", result.phone);
+                cookie.set("email", result.email);
                 cookie.set("icon", result.icon);
                 router.push('/account');
             } else Notify.danger(response.message);

@@ -197,8 +197,8 @@ export default {
 
 .number {
     font-size: 18px;
-    width: 100px;
-    text-align: right;
+    width: 60px;
+    text-align: left;
     display: inline-block;
 }
 
