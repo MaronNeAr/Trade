@@ -41,9 +41,9 @@ public class SmsService {
             String[] phoneNumberSet1 = {phoneNumber};
             req.setPhoneNumberSet(phoneNumberSet1);
 
-            req.setSmsSdkAppId("1400798125");
-            req.setSignName("冰雪悦动个人网");
-            req.setTemplateId("1712446");
+            req.setSmsSdkAppId("xxxxxx");
+            req.setSignName("xxxxxx");
+            req.setTemplateId("xxxxxx");
 
             String[] templateParamSet1 = {authCode};
             req.setTemplateParamSet(templateParamSet1);
