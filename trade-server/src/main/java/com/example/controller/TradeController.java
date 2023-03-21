@@ -21,15 +21,28 @@ public class TradeController {
     @PostMapping("/buy")
     public Object buyCurrency(HttpServletRequest req) {
         try {
+            String lucky = tradeService.getRandomString(10);
+            String encodeLucky = getSSHA1512Local(lucky);
+            System.out.println(lucky);
+            System.out.println(encodeLucky);
             String bc = req.getParameter("bc");
             String qc = req.getParameter("qc");
             BigDecimal price = new BigDecimal(req.getParameter("price"));
             BigDecimal size = new BigDecimal(req.getParameter("size"));
             String account = req.getParameter("account");
             if (bc.equals("none")) return new ErrorMessage("请先选择交易币").getMessage();
-            int status = tradeService.buyCurrent(bc, qc, price, size, account);
-            if (status == 0) return new ErrorMessage("您没有足够的" + qc.toUpperCase() + "，请先充值").getMessage();
-            else return new SuccessMessage("交易成功！").getMessage();
+            int flag2 = tradeService.buyCurrentCompare(bc,price);
+            if (flag2 <= 0){
+                int status = tradeService.buyCurrent(bc, qc, price, size, account);
+                if (status == 0) return new ErrorMessage("您没有足够的" + qc.toUpperCase() + "，请先充值").getMessage();
+                else return new SuccessMessage("交易成功！").getMessage();
+            }
+            else if(flag2 == 2){
+                return new ErrorMessage("拒绝连接" + qc.toUpperCase() + "，请先设置服务器代理").getMessage();
+            }
+            else{
+                return new ErrorMessage("超时" + qc.toUpperCase() + "，请先刷新页面").getMessage();
+            }
         } catch (Exception e) {
             System.out.println(e);
             return new ErrorMessage("交易失败").getMessage();
@@ -45,9 +58,18 @@ public class TradeController {
             BigDecimal size = new BigDecimal(req.getParameter("size"));
             String account = req.getParameter("account");
             if (bc.equals("none")) return new ErrorMessage("请先选择交易币").getMessage();
-            int status = tradeService.sellCurrent(bc, qc, price, size, account);
-            if (status == 0) return new ErrorMessage("您没有足够的" + bc).getMessage();
-            else return new SuccessMessage("交易成功！").getMessage();
+            int flag2 = tradeService.sellCurrentCompare(bc,price);
+            if (flag2 <= 0){
+                int status = tradeService.sellCurrent(bc, qc, price, size, account);
+                if (status == 0) return new ErrorMessage("您没有足够的" + bc).getMessage();
+                else return new SuccessMessage("交易成功！").getMessage();
+            }
+            else if(flag2 == 2){
+                return new ErrorMessage("拒绝连接" + qc.toUpperCase() + "，请先设置服务器代理").getMessage();
+            }
+            else{
+                return new ErrorMessage("超时" + qc.toUpperCase() + "，请先刷新页面").getMessage();
+            }
         } catch (Exception e) {
             System.out.println(e);
             return new ErrorMessage("交易失败").getMessage();
