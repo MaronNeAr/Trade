@@ -37,6 +37,7 @@ public class AccountController {
             String account = req.getParameter("account");
             BigDecimal recharge = new BigDecimal(req.getParameter("recharge"));
             if (recharge.equals("none")) return new ErrorMessage("请先选择充值余额").getMessage();
+            else if (recharge.signum() == -1) return new ErrorMessage("充值余额不能为负数").getMessage();
             int status = accountService.rechargeByAccount(account, recharge);
             if (status == 1) return new ErrorMessage("您余额不足!" ).getMessage();
             else {
@@ -54,6 +55,7 @@ public class AccountController {
             String account = req.getParameter("account");
             BigDecimal cash = new BigDecimal(req.getParameter("cash"));
             if (cash.equals("none")) return new ErrorMessage("请先选择提现余额").getMessage();
+            else if (cash.signum() == -1) return new ErrorMessage("提现余额不能为负数").getMessage();
             int status = accountService.cashByAccount(account, cash);
             if (status == 1) return new ErrorMessage("您计价币不足!" ).getMessage();
             else {
